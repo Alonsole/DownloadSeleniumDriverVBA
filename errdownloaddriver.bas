@@ -5,21 +5,21 @@ Dim request As Object, file As Object
 Dim response As String, desktopPath As String
 Dim localZipFile As Variant, destFolder As Variant
 Dim Sh As Object, ZipNamespace As Object, Item As Object
-'Задать маршрут (где расположен Selenium)
+'Р—Р°РґР°С‚СЊ РјР°СЂС€СЂСѓС‚ (РіРґРµ СЂР°СЃРїРѕР»РѕР¶РµРЅ Selenium)
 selenium_path = "C:\Users\Maksim\AppData\Local\SeleniumBasic\"
-'Настройка подключения к браузеру
+'РќР°СЃС‚СЂРѕР№РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р±СЂР°СѓР·РµСЂСѓ
 driver.SetCapability "debuggerAddress", "localhost:9222"
 
-'Обработка ошибки
+'РћР±СЂР°Р±РѕС‚РєР° РѕС€РёР±РєРё
 On Error Resume Next
     driver.Start ("CHROME")
 If err.Number = 33 Then
-    MsgBox "Ошибка при создании сессии. Будет удален старый драйвер, скачан новый драйвер. Можете повторить запрос по выполнению операции", vbExclamation
-    
-    'On Error GoTo err
-    'Блок загрузки драйвера
+    MsgBox "РћС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё СЃРµСЃСЃРёРё. Р‘СѓРґРµС‚ СѓРґР°Р»РµРЅ СЃС‚Р°СЂС‹Р№ РґСЂР°Р№РІРµСЂ, СЃРєР°С‡Р°РЅ РЅРѕРІС‹Р№ РґСЂР°Р№РІРµСЂ. РњРѕР¶РµС‚Рµ РїРѕРІС‚РѕСЂРёС‚СЊ Р·Р°РїСЂРѕСЃ РїРѕ РІС‹РїРѕР»РЅРµРЅРёСЋ РѕРїРµСЂР°С†РёРё", vbExclamation
+     
+    On Error GoTo err
+    'Р‘Р»РѕРє Р·Р°РіСЂСѓР·РєРё РґСЂР°Р№РІРµСЂР°
         Url = "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE"
-    ' Отправить GET-запрос
+    ' РћС‚РїСЂР°РІРёС‚СЊ GET-Р·Р°РїСЂРѕСЃ
     Set request = CreateObject("MSXML2.XMLHTTP")
         request.Open "GET", Url, False
         request.Send
@@ -28,7 +28,7 @@ If err.Number = 33 Then
         download = "https://storage.googleapis.com/chrome-for-testing-public/" & response & "/win64/chromedriver-win64.zip"
         request.Open "GET", download, False
         request.Send
-        'Сохранить файл
+        'РЎРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р»
     Set file = CreateObject("ADODB.Stream")
         file.Type = 1
         file.Open
@@ -40,30 +40,30 @@ If err.Number = 33 Then
         Set request = Nothing
         Set file = Nothing
         
-    'Блок удаления предыдущего драйвера
+    'Р‘Р»РѕРє СѓРґР°Р»РµРЅРёСЏ РїСЂРµРґС‹РґСѓС‰РµРіРѕ РґСЂР°Р№РІРµСЂР°
     Set wsh = CreateObject("WScript.Shell")
         wsh.Run "powershell.exe Stop-Process -name chromedriver -force", vbHide
         Application.Wait (Now + TimeValue("0:00:03"))
         Kill selenium_path & "chromedriver.exe"
         
-    'Блок распаковки
+    'Р‘Р»РѕРє СЂР°СЃРїР°РєРѕРІРєРё
         localZipFile = selenium_path & Name
     Set Sh = CreateObject("Shell.Application")
     Set ZipNamespace = Sh.Namespace(localZipFile)
         Sh.Namespace(selenium_path).CopyHere ZipNamespace.Items.Item.Path & "\chromedriver-win64\chromedriver.exe"
         
-    'Блок удаления архива с драйвером
+    'Р‘Р»РѕРє СѓРґР°Р»РµРЅРёСЏ Р°СЂС…РёРІР° СЃ РґСЂР°Р№РІРµСЂРѕРј
         Kill selenium_path & Name
-    'Информирование
-        MsgBox "Операция по загрузке и замене Драйвера выполнена", vbInformation
+    'РРЅС„РѕСЂРјРёСЂРѕРІР°РЅРёРµ
+        MsgBox "РћРїРµСЂР°С†РёСЏ РїРѕ Р·Р°РіСЂСѓР·РєРµ Рё Р·Р°РјРµРЅРµ Р”СЂР°Р№РІРµСЂР° РІС‹РїРѕР»РЅРµРЅР°", vbInformation
 End If
 
-'Блок запуска после устанения ошибки
+'Р‘Р»РѕРє Р·Р°РїСѓСЃРєР° РїРѕСЃР»Рµ СѓСЃС‚Р°РЅРµРЅРёСЏ РѕС€РёР±РєРё
 On Error GoTo 0
     driver.Start ("CHROME")
     driver.Get ("https://www.ya.ru/")
-    MsgBox "Успешный запуск", vbInformation
+    MsgBox "РЈСЃРїРµС€РЅС‹Р№ Р·Р°РїСѓСЃРє", vbInformation
 Exit Sub
 err:
-    MsgBox "Операция завершена с ошибкой", vbCritical
+    MsgBox "РћРїРµСЂР°С†РёСЏ Р·Р°РІРµСЂС€РµРЅР° СЃ РѕС€РёР±РєРѕР№", vbCritical
 End Sub
